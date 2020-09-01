@@ -32,7 +32,12 @@ COLOR_BG_CYAN = u'\u001b[46m'
 COLOR_BG_WHITE= u'\u001b[47m'
 
 def play_maze(maze_obj, limit,tinkle):
-	
+	print("Possiveis buscas:")
+	print("1-Busca em profundiade")
+	print("2-Busca por aprofundamento iterativo")
+	print("3-Busca por descida de encosta")
+	print("4-Busca por tempera simulada")
+	opcao = int(input("Digite uma opção:"))
 	#clear the screen clear if linux, cls if windows
 	os.system('clear' if os.name!='nt' else 'cls')	
 	
@@ -51,25 +56,54 @@ def play_maze(maze_obj, limit,tinkle):
 	# sai qdo atinge o max de passos ou chega no objetivo
 
 	aprofundamento = 1# int(input("Nivel maximo de aprofundamento:"))
-	while not (move > limit) and not maze_obj.is_done():
-		time.sleep(1)
-		#info = gbc063.algoritmo_profundidade(current, options,visitado)   
-	# para debug
-		#print('pos:',current)#,'\noptions\n')
-		#for i in range(len(options)):
-		#	print(options[i])
-		#action = gbc063.algoritmo_profundidade(current, options,visitado)
-		action = gbc063.algoritmo_aprofundamento_iterativo(current, options,pilha,visitado,aprofundamento)
-		if(action == []):
-			aprofundamento +=1
-			visitado = []
-			pilha = []
-		else:
+	if(opcao == 1):
+		while not (move > limit) and not maze_obj.is_done():
+			print("1")
+			time.sleep(1)
+			action = gbc063.algoritmo_profundidade(current, options,visitado) 
 			info = maze_obj.move(action)
 			current = info[1]
 			options = info[2]
-		# update maze based on algoritmo feedback
-		move += 1
+			move += 1
+
+	if(opcao == 2):
+		while not (move > limit) and not maze_obj.is_done():
+			time.sleep(1)
+			action = gbc063.algoritmo_aprofundamento_iterativo(current, options,pilha,visitado,aprofundamento)
+			if(action == []):
+				aprofundamento +=1
+				visitado = []
+				pilha = []
+			else:
+				info = maze_obj.move(action)
+				current = info[1]
+				options = info[2]
+			move += 1
+
+	if(opcao == 3):
+		while not (move > limit) and not maze_obj.is_done():
+			time.sleep(0.5)
+			action = gbc063.subidaEncosta(current, options) 
+			if(action == False):
+				print("nao foi possivel achar melhor caminho")
+				break
+			info = maze_obj.move(action)
+			current = info[1]
+			options = info[2]
+			move += 1
+	if(opcao == 4):	
+		temp = 100
+		fator_diminuicao = 1
+		while not (move > limit) and not maze_obj.is_done():
+			time.sleep(1)
+			action = gbc063.tempera(current, options,temp) 
+			temp-= fator_diminuicao
+			info = maze_obj.move(action)
+			current = info[1]
+			options = info[2]
+			move += 1
+	else:
+		return 0
 
 	# saindo
 	if (move < limit):
